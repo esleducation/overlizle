@@ -1,0 +1,23 @@
+{
+  "name": "jquery.overlizle",
+  "version": "2.0.0",
+  "homepage": "https://github.com/olivierbossel/overlizle",
+  "authors": [
+    "Olivier Bossel <olivier.bossel@gmail.com>"
+  ],
+  "description": "jQuery plugin to create fully customizable overlays",
+  "main": "js/jquery.overlizle.js",
+  "keywords": [
+    "overlizle",
+    "overlay",
+    "jquery"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

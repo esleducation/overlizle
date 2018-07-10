@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<meta charset="utf-8" />
+
+	<link href="css/style.css" rel="stylesheet" type="text/css" />
+
+	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script src="js/jquery.overlizle.js"></script>
+
+	<script>
+
+		jQuery(function($) {
+
+			// setup error
+			Overlizle.setup({
+				onOpen : function() {
+					alert('open error overlay');
+				}
+			}, 'error');
+
+			// listen for event on body :
+			$('body').bind('overlizle.open', function(e) {
+				console.log('an overlay has opened');
+			}).bind('overlizle.close', function(e) {
+				console.log('an overlay has closed');
+			});
+
+			// init overlizle on dom elements :
+			$('[data-overlizle]').overlizle();
+
+			// create overlay by object
+			var myOverlay = new Overlizle({
+				onClose : function(api, callback) {
+					// do something here before close
+					alert('closing overlay');
+					// call the callback to destroy the overlay
+					callback();
+				}
+			});
+
+			// bind click to open programatically :
+			$('[data-open-programatically]').bind('click', function(e) {
+
+				// open myOverlay :
+				myOverlay.open('content/myContent.html');
+
+			});
+
+			// init some fancy jquery things on a button that is in an overlay DOM content
+			$('[data-some-fancy-jquery-things]').bind('click', function(e) {
+				alert('click');
+			});
+
+		});
+
+	</script>
+
+	<title>jQuery.overlizle</title>
+
+</head>
+<body>
+
+	<header class="header">
+		<h1>jQuery.overlizle</h1>
+		<h2>jQuery plugin to create fully customizable overlays</h2>
+		<h3>1.2.0</h3>
+	</header>
+
+	<div class="container">
+	
+		<section class="text">
+			<h2>
+				Demos
+			</h2>
+			<p>
+				This present some usage demo of the plugin. For more informations and full documentation, go to github repository page
+			</p>
+			<a class="btn btn-info" href="https://github.com/olivierbossel/overlizle" target="_blank">
+				Girhub repo
+			</a>
+		</section>
+
+	</div>
+
+	<div class="samples">
+
+		<a class="btn btn-info" href="content/myContent.html" data-overlizle data-overlizle-modal="true">
+			Open an ajax loaded overlay (modal)
+		</a>
+		<br />
+		<a class="btn btn-info" href="#myDomContent" data-overlizle data-overlizle-autoopen>
+			Open a DOM content
+		</a>
+		<br />
+		<a class="btn btn-info" href="iframe:http://olivierbossel.com" data-overlizle>
+			Open an iframe content
+		</a>
+		<br />
+		<a class="btn btn-info" href="http://olivierbossel.com" data-overlizle data-overlizle-iframe>
+			Open an iframe content (data-overlizle-iframe)
+		</a>
+		<br />
+		<a class="btn btn-danger" href="content/myError.html" data-overlizle data-overlizle-type="error">
+			Open with an error type
+		</a>
+		<br />
+		<button class="btn btn-success" data-open-programatically>
+			Open an overlay programatically
+		</button>
+
+	</div>
+
+	<div id="myDomContent">
+		<h2>I'm a DOM content</h2>
+		<p>Etiam porta diam lacus, et congue arcu gravida vel. Nunc quis molestie est. In blandit ullamcorper massa et tristique. Suspendisse nisi nulla, ultrices id adipiscing lacinia, aliquam vitae orci.</p>
+		<button class="btn btn-info" data-some-fancy-jquery-things>
+			Click me !
+		</button>
+	</div>
+
+</body>
+</html>
