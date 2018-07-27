@@ -4,8 +4,8 @@
  * This plugin allow to easely create fully customizlable overlays
  *
  * @created	08.04.2012
- * @updated	20.01.2016
- * @version	2.0.0
+ * @updated	13.05.2015
+ * @version	1.2.20
  * @author	Olivier Bossel <olivier.bossel@gmail.com>
  */
 (function (factory) {
@@ -109,6 +109,8 @@
 			_body : $('body'),
 			wrapper : null,									// the overall wrapper
 			shadow : null,									// the shadow div
+			body_wrapper : null,							// the body wrapper
+			body_wrapper_inner : null,						// the body wrapper inner that is verticaly aligned
 			body : null										// the body itself
 		};	
 		this._clickEvent = 'click'; 									// use click. for touch devices, add fastclick if needed
@@ -383,18 +385,23 @@
 		_this.$refs.wrapper.append('<div class="overlizle-shadow" />');
 		_this.$refs.shadow = _this.$refs.wrapper.find('.overlizle-shadow');
 
-		// add vertical aligner
-		_this.$refs.wrapper.append('<div style="width:0px; height:100%; display:inline-block; vertical-align:middle;" />');
+		// create the content container :
+		_this.$refs.wrapper.append('<div class="overlizle-body-wrapper" />');
+		_this.$refs.body_wrapper = _this.$refs.wrapper.find('.overlizle-body-wrapper');
+
+		// create the content container :
+		_this.$refs.body_wrapper.append('<div class="overlizle-body-wrapper-inner" />');
+		_this.$refs.body_wrapper_inner = _this.$refs.wrapper.find('.overlizle-body-wrapper-inner');
 
 		// create the body :
-		_this.$refs.wrapper.append('<div class="overlizle-body" />');
-		_this.$refs.body = _this.$refs.wrapper.find('.overlizle-body');
+		_this.$refs.body_wrapper_inner.append('<div class="overlizle-body" />');
+		_this.$refs.body = _this.$refs.body_wrapper.find('.overlizle-body');
 
 		// add click listener on shadow :
 		if( ! _this.settings.modal || _this.settings.modal == 'false') {
-			_this.$refs.shadow.bind(_this._clickEvent, function(e) {
-				// close
-				_this.close();
+			_this.$refs.body_wrapper_inner.bind(_this._clickEvent, function(e) {
+				// close only if click on wrapper, not on body itself :
+				if ($(e.target).hasClass('overlizle-body-wrapper-inner')) _this.close();
 			});
 		}
 
@@ -511,6 +518,8 @@
 			// empty the references :
 			_this.$refs.wrapper = null;
 			_this.$refs.shadow = null;
+			_this.$refs.body_wrapper = null;
+			_this.$refs.body_wrapper_inner = null;
 			_this.$refs.body = null;
 
 			// update is opened state :
@@ -544,6 +553,8 @@
 		// empty the references :
 		_this.$refs.wrapper = null;
 		_this.$refs.shadow = null;
+		_this.$refs.body_wrapper = null;
+		_this.$refs.body_wrapper_inner = null;
 		_this.$refs.body = null;
 
 		// unbind all the listeners :
@@ -622,26 +633,61 @@
 			display : 'block',
 			position : 'fixed',
 			top : 0, left: 0,
-			width : '100%', height : '100vh',
-			overflow : 'auto',
-			'-webkit-overflow-scrolling' : 'touch',
-			'text-align' : 'center',
-			'white-space' : 'nowrap'
+			width : '100%', height : '100%',
+			overflow : 'auto'
 		});
 		// shadow css :
 		_this.$refs.shadow.css({
 			position : 'fixed',
 			top : 0, left : 0,
-			width : '100%', height : '100vh'
+			width : '100%', height : '100%'
+		});
+		// body wrapper :
+		_this.$refs.body_wrapper.css({
+			position : 'relative',
+			display : 'table',
+			'table-layout' : 'fixed',
+			width : '100%',
+			height : '100%'
+		});
+		_this.$refs.body_wrapper_inner.css({
+			display : 'table-cell',
+			'text-align' : 'center',
+			'vertical-align' : 'middle',
+			width : '100%',
+			height : '100%'
 		});
 		// body css :
 		_this.$refs.body.css({
-			display : 'inline-block',
+			display : 'block',
 			'text-align' : 'left',
-			position : 'relative',
-			'vertical-align' : 'middle',
-			'white-space' : 'normal'
+			'max-height' : '100%',
+			'margin' : '0 auto'
 		});
+
+		// if in FB tab :
+		if (typeof FB != 'undefined' && typeof FB.Canvas != 'undefined' && window != window.top)
+		{
+			_this.$refs.body.css({
+				position : 'absolute',
+				top : '50%', left : '50%',
+				'margin-top' : -_this.$refs.body.outerHeight()*.5,
+				'margin-left' : -_this.$refs.body.outerWidth()*.5
+			});
+
+			// get canvas infos from facebook :
+			FB.Canvas.getPageInfo(function(pageInfo){
+				if (pageInfo && pageInfo.scrollTop != null)
+				{
+					// calculate top :
+					var t = pageInfo.scrollTop + pageInfo.clientHeight / 2 - pageInfo.offsetTop;
+					// apply the new top value to the body :
+					_this.$refs.body.css({
+						top : t
+					});
+				}				
+			});
+		}
 	};
 
 	/**
@@ -735,7 +781,7 @@
 			});
 		} else {
 			// error :
-			$.error( 'Method ' +  method + ' does not exist on jQuery.overlizle' );
+			$.error( 'Method ' +  method + ' does not exist on jQuery.slidizle' );
 		}
 
 		// return this :

@@ -1,4 +1,4 @@
-# jQuery.overlizle (2.0.0)
+# jQuery.overlizle (1.2.20)
 
 This plugin allows you to create fully customizable overlays
 
@@ -147,8 +147,10 @@ myOverlay.open('iframe:http://olivierbossel.com');
 This is the generated html structure :
 
 - wrapper 				: This is the wrapper of the overlay
-    - shadow 				: This is the div that will cover all the screen
-    - body 					: This is the div that will hold your actual content
+    - shadow 					: This is the div that will cover all the screen
+    - body_wrapper 				: This is used to center your content vertically by table display
+    	- body_wrapper_inner 	: This is used to center vertically your content
+        	- body 				: This is the div that will hold your actual content
 
  > You can access all of these elements with the __{api}.$refs.{name} public variables__. For example : {api}.$refs.body
 
